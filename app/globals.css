@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+/* Dark mode is opt-in: the site always opens in light mode. The toggle adds `.dark` to <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- Design tokens ------------------------------------------------------------------------
+   Change colours here only. Components use the semantic names (bg-page, text-ink, ...), so
+   light and dark themes switch automatically without per-component `dark:` classes. */
+:root {
+  color-scheme: light;
+  --page: #f5f6fb;
+  --card: #ffffff;
+  --card-alt: #eef0f8;
+  --line: #e1e5f0;
+  --ink: #101735;
+  --muted: #525d78;
+  --accent: #4f46e5;
+  --accent-ink: #ffffff;
+  --accent-soft: #eceafd;
+  --navy: #0b1230;
+  --danger: #b42318;
+  --chart-a: #4f46e5;
+  --chart-b: #d97706;
+  --chart-c: #0d9488;
+  --focus: #1d4ed8;
+  --shadow: 0 1px 2px rgb(16 23 53 / 0.05), 0 6px 20px rgb(16 23 53 / 0.06);
+  --shadow-lg: 0 18px 48px rgb(16 23 53 / 0.16);
+  /* Category colours: solid (icons, cards) and soft (tinted backgrounds). Solids all give white text >= 4.5:1. */
+  --cat-finance: #4f46e5;
+  --cat-salary-tax: #047857;
+  --cat-daily-life: #b45309;
+  --cat-health: #be123c;
+  --cat-business: #0369a1;
+  --cat-utilities: #7e22ce;
+}
+
+.dark {
+  color-scheme: dark;
+  --page: #0a0f24;
+  --card: #121a36;
+  --card-alt: #182244;
+  --line: #27335c;
+  --ink: #e9edfa;
+  --muted: #a3aed0;
+  --accent: #8b93ff;
+  --accent-ink: #0b1230;
+  --accent-soft: #1d2650;
+  --navy: #060a1c;
+  --danger: #ff8a80;
+  --chart-a: #a5b4fc;
+  --chart-b: #fbbf24;
+  --chart-c: #5eead4;
+  --focus: #93c5fd;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 20px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 18px 48px rgb(0 0 0 / 0.55);
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-card-alt: var(--card-alt);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-chart-a: var(--chart-a);
+  --color-chart-b: var(--chart-b);
+  --color-chart-c: var(--chart-c);
+  --color-navy: var(--navy);
+  --shadow-card: var(--shadow);
+  --shadow-pop: var(--shadow-lg);
+  /* Inter (self-hosted, one small file) first; the system stack covers the rupee sign and any gap. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+html[data-scroll-behavior="smooth"] {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+@layer base {
+  /* In the base layer so utility classes such as `outline-none` can still override it. */
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* Anchored sections should not hide under the sticky header. */
+[id] {
+  scroll-margin-top: 5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-scroll-behavior="smooth"] {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Long-form article text used by ContentSection. */
+.prose-block p + p,
+.prose-block ul + p,
+.prose-block ol + p,
+.prose-block p + ul,
+.prose-block p + ol {
+  margin-top: 0.85rem;
+}
+.prose-block ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.prose-block ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+.prose-block li + li {
+  margin-top: 0.4rem;
+}
+.prose-block a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- Category colours: set data-cat="finance" on an element, then use .cat-solid / .cat-text ---------- */
+[data-cat="finance"] { --cat: var(--cat-finance); }
+[data-cat="salary-tax"] { --cat: var(--cat-salary-tax); }
+[data-cat="daily-life"] { --cat: var(--cat-daily-life); }
+[data-cat="health"] { --cat: var(--cat-health); }
+[data-cat="business"] { --cat: var(--cat-business); }
+[data-cat="utilities"] { --cat: var(--cat-utilities); }
+.cat-solid { background-color: var(--cat, var(--accent)); color: #fff; }
+.cat-tint { background-color: color-mix(in srgb, var(--cat, var(--accent)) 12%, var(--card)); color: var(--cat, var(--accent)); }
+.dark .cat-tint { color: color-mix(in srgb, var(--cat, var(--accent)) 35%, #fff); }
+.cat-border:hover { border-color: var(--cat, var(--accent)); }
+.cat-hero { background-image: linear-gradient(135deg, var(--cat), color-mix(in srgb, var(--cat) 72%, #000)); color: #fff; }
+
+/* ---- Smooth, cheap interactions: only transform / opacity / shadow animate ------------------------ */
+.lift { transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+.lift:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+/* Below-the-fold sections are laid out lazily, which speeds up first paint on long pages. */
+.cv-auto { content-visibility: auto; contain-intrinsic-size: auto 640px; }
+
+.hero-bg {
+  background-image:
+    radial-gradient(60rem 28rem at 85% -10%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+    radial-gradient(40rem 22rem at 0% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%);
+}
